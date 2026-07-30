@@ -1,0 +1,6 @@
+@Bracket_Generator.API_HostAddress = http://localhost:5095
+
+GET {{Bracket_Generator.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
