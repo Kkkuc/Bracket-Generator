@@ -1,6 +1,11 @@
+using Bracket_Generator.API.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -12,8 +17,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // 1. Włącz serwowanie domyślnych i statycznych plików z folderu wwwroot
-app.UseDefaultFiles();
-app.UseStaticFiles();
+//app.UseDefaultFiles();
+//app.UseStaticFiles();
 
 var summaries = new[]
 {
@@ -36,7 +41,7 @@ app.MapGet("/weatherforecast", () =>
 
 // 2. Obsługa nawigacji po stronie klienta (SPA Fallback)
 // Jeśli zapytanie nie dotyczy API ani pliku statycznego, zwróć index.html z Vue
-app.MapFallbackToFile("index.html");
+//app.MapFallbackToFile("index.html");
 
 app.Run();
 
