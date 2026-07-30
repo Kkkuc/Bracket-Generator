@@ -1,18 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+
+// 1. Włącz serwowanie domyślnych i statycznych plików z folderu wwwroot
+//app.UseDefaultFiles();
+//app.UseStaticFiles();
 
 var summaries = new[]
 {
@@ -33,11 +34,13 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast");
 
+// 2. Obsługa nawigacji po stronie klienta (SPA Fallback)
+// Jeśli zapytanie nie dotyczy API ani pliku statycznego, zwróć index.html z Vue
+//app.MapFallbackToFile("index.html");
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
-
-//test
