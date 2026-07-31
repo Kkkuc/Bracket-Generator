@@ -1,29 +1,40 @@
 <template>
   <div class="bracket-match" :class="{ 'is-final': isFinal }">
+    <div v-if="!isFirstRound" class="incoming-stub"></div>
+
     <BracketTeam/>
 
     <!-- Łącznik -->
-    <div v-if="!isFinal" class="line-connector">
-      <div class="line-horizontal-short"></div>
+    <div v-if="!isFinal" class="outgoing-connector" :class="isTopInPair ? 'top-match' : 'bottom-match'">
+      
+      <div class="line-horizontal"></div>
+      
       <div class="line-vertical"></div>
-      <div class="line-horizontal-long" v-if="isTopInPair"></div>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-import {computed, getCurrentInstance} from 'vue';
+import {computed} from 'vue';
 import BracketTeam from './BracketTeam.vue';
 
-defineProps({
-  isFinal: {type: Boolean, default: false}
+const props = defineProps({
+  matchIndex: {
+    type: Number,
+    required: true
+  },
+  isFirstRound: {
+    type: Boolean,
+    default: false
+  },
+  isFinal: {
+    type: Boolean,
+    default: false
+  }
 });
 
-// Sprawdzamy czy mecz jest górnym (nieparzystym) czy dolnym w parze
-const instance = getCurrentInstance();
-const isTopInPair = computed(() => {
-  return (instance?.vnode.key % 2) === 0;
-});
+const isTopInPair = computed(() => props.matchIndex % 2 === 0);
 </script>
 
 <style scoped>
@@ -31,52 +42,73 @@ const isTopInPair = computed(() => {
   position: relative;
   display: flex;
   align-items: center;
-  margin: 20px 0;
+  margin: var(--vertical-gap, 20px) 0;
 }
 
-.bracket-round {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  margin-right: 60px; /* Odstęp między rundami */
-}
-
-/* Pozioma linia z kafelka */
-.bracket-match::after {
-  content: '';
+.incoming-stub {
   position: absolute;
-  right: -30px; /* 50% z 60px */
+  left: calc(-1 * var(--round-gap, 60px) / 2); /* -x/2 */
+  width: calc(var(--round-gap, 60px) / 2);       /* x/2 */
   top: 50%;
-  width: 30px;
   height: 2px;
-  background: #000;
+  background-color: #000;
+  transform: translateY(-50%);
 }
 
-/* Pionowa linia łącząca mecz 1 i 2 */
-.bracket-match:nth-child(odd)::before {
-  content: '';
+/* Łącznik wyjściowy L (z prawej) = x / 2 */
+.outgoing-connector {
   position: absolute;
-  right: -30px;
+  right: calc(-1 * var(--round-gap, 60px) / 2); /* -x/2 */
+  width: calc(var(--round-gap, 60px) / 2);        /* x/2 */
+  pointer-events: none;
+}
+
+.outgoing-connector .line-horizontal {
+  position: absolute;
   top: 50%;
-  height: calc(100% + 40px); /* Pokrywa dystans do dolnego meczu */
+  left: 0;
+  width: 100%; /* Wypełnia całą szerokość łącznika (czyli x/2) */
+  height: 2px;
+  background-color: #000;
+  transform: translateY(-50%);
+}
+
+.outgoing-connector .line-vertical {
+  position: absolute;
+  right: 0; /* Pionowa kreska staje dokładnie na końcu poziomej */
   width: 2px;
-  background: #000;
+  background-color: #000;
 }
 
-/* Poziomy "odcinek wychodzący" ze środka pionowej linii do następnej rundy */
-.bracket-match:nth-child(odd) .bracket-team::after {
-  content: '';
-  position: absolute;
-  right: -60px;
-  /* Ustawia się w połowie wysokości między nieparzystym a parzystym meczem */
-  top: calc(100% + 20px);
-  width: 30px;
-  height: 2px;
-  background: #000;
+
+.outgoing-connector.top-match {
+  top: 50%;
+  height: calc(50% + var(--vertical-gap, 20px));
 }
 
-.bracket-match.is-final::after,
-.bracket-match.is-final::before {
-  display: none;
+.outgoing-connector.top-match .line-vertical {
+  top: 0;
+  height: 100%;
 }
+
+.outgoing-connector.bottom-match {
+  bottom: 50%;
+  height: calc(50% + var(--vertical-gap, 20px));
+}
+
+.outgoing-connector.bottom-match .line-vertical {
+  bottom: 0;
+  height: 100%;
+}
+
+.bracket-match.is-winner .outgoing-connector .line-horizontal,
+.bracket-match.is-winner .outgoing-connector .line-vertical,
+.bracket-match.is-winner .incoming-stub {
+  background-color: #4caf50;
+  height: 4px;
+}
+.bracket-match.is-winner .outgoing-connector .line-vertical {
+  width: 4px;
+}
+
 </style>

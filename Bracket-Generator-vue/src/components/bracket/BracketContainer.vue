@@ -4,7 +4,9 @@
         v-for="(matches, index) in rounds"
         :key="index"
         :match-count="matches"
+        :round-index="index"
         :is-final="index === rounds.length - 1"
+        :is-first-round="index === 0"
     />
   </div>
 </template>
