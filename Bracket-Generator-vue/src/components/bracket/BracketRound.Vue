@@ -12,10 +12,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import BracketMatch from './BracketMatch.vue';
 
-const props = defineProps({
+defineProps({
   matchCount: {
     type: Number,
     required: true
@@ -35,22 +34,13 @@ const props = defineProps({
   gap: {
     type: Number,
     default: 60
-  },
-  baseVerticalGap: {
-    type: Number,
-    default: 20
   }
-});
-
-const computedVerticalGap = computed(() => {
-  return props.baseVerticalGap * Math.pow(2, props.roundIndex);
 });
 </script>
 
 <style scoped>
 .bracket-round {
   --round-gap: v-bind(gap + 'px');
-  --vertical-gap: v-bind(computedVerticalGap + 'px');
 
   display: flex;
   flex-direction: column;

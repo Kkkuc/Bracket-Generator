@@ -1,6 +1,6 @@
 <template>
   <div class="bracket-preview-view">
-    <BracketContainer :team-count="16" />
+    <BracketContainer :team-count="32" />
   </div>
 </template>
 
