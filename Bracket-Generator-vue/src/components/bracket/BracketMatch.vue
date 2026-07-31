@@ -1,17 +1,15 @@
 <template>
-  <div class="bracket-match" :class="{ 'is-final': isFinal }">
-    <div v-if="!isFirstRound" class="incoming-stub"></div>
+  <div
+      class="bracket-match"
+      :class="{ 
+      'is-final': isFinal, 
+      'is-first-round': isFirstRound,
+      'top-match': isTopInPair, 
+      'bottom-match': !isTopInPair 
+    }">
 
     <BracketTeam/>
-
-    <!-- Łącznik -->
-    <div v-if="!isFinal" class="outgoing-connector" :class="isTopInPair ? 'top-match' : 'bottom-match'">
-      
-      <div class="line-horizontal"></div>
-      
-      <div class="line-vertical"></div>
-      
-    </div>
+    
   </div>
 </template>
 
@@ -20,19 +18,11 @@ import {computed} from 'vue';
 import BracketTeam from './BracketTeam.vue';
 
 const props = defineProps({
-  matchIndex: {
-    type: Number,
-    required: true
-  },
-  isFirstRound: {
-    type: Boolean,
-    default: false
-  },
-  isFinal: {
-    type: Boolean,
-    default: false
-  }
+  matchIndex: {type: Number, required: true},
+  isFirstRound: {type: Boolean, default: false},
+  isFinal: {type: Boolean, default: false}
 });
+
 
 const isTopInPair = computed(() => props.matchIndex % 2 === 0);
 </script>
@@ -45,70 +35,38 @@ const isTopInPair = computed(() => props.matchIndex % 2 === 0);
   margin: var(--vertical-gap, 20px) 0;
 }
 
-.incoming-stub {
+.bracket-match:not(.is-first-round)::before {
+  content: '';
   position: absolute;
-  left: calc(-1 * var(--round-gap, 60px) / 2); /* -x/2 */
-  width: calc(var(--round-gap, 60px) / 2);       /* x/2 */
+  left: calc(-1 * var(--round-gap, 60px) / 2);
+  width: calc(var(--round-gap, 60px) / 2);
   top: 50%;
   height: 2px;
   background-color: #000;
   transform: translateY(-50%);
 }
 
-/* Łącznik wyjściowy L (z prawej) = x / 2 */
-.outgoing-connector {
+.bracket-match:not(.is-final)::after {
+  content: '';
   position: absolute;
-  right: calc(-1 * var(--round-gap, 60px) / 2); /* -x/2 */
-  width: calc(var(--round-gap, 60px) / 2);        /* x/2 */
+  right: calc(-1 * var(--round-gap, 60px) / 2);
+  width: calc(var(--round-gap, 60px) / 2);
+  height: calc(50% + var(--vertical-gap, 20px));
   pointer-events: none;
 }
 
-.outgoing-connector .line-horizontal {
-  position: absolute;
+/* Dla meczu na górze: linia na dole i z prawej */
+.bracket-match.top-match:not(.is-final)::after {
   top: 50%;
-  left: 0;
-  width: 100%; /* Wypełnia całą szerokość łącznika (czyli x/2) */
-  height: 2px;
-  background-color: #000;
-  transform: translateY(-50%);
+  border-top: 2px solid #000;    /* Pozioma kreska */
+  border-right: 2px solid #000;  /* Pionowa kreska w dół */
 }
 
-.outgoing-connector .line-vertical {
-  position: absolute;
-  right: 0; /* Pionowa kreska staje dokładnie na końcu poziomej */
-  width: 2px;
-  background-color: #000;
-}
-
-
-.outgoing-connector.top-match {
-  top: 50%;
-  height: calc(50% + var(--vertical-gap, 20px));
-}
-
-.outgoing-connector.top-match .line-vertical {
-  top: 0;
-  height: 100%;
-}
-
-.outgoing-connector.bottom-match {
+/* Dla meczu na dole: linia na górze i z prawej */
+.bracket-match.bottom-match:not(.is-final)::after {
   bottom: 50%;
-  height: calc(50% + var(--vertical-gap, 20px));
-}
-
-.outgoing-connector.bottom-match .line-vertical {
-  bottom: 0;
-  height: 100%;
-}
-
-.bracket-match.is-winner .outgoing-connector .line-horizontal,
-.bracket-match.is-winner .outgoing-connector .line-vertical,
-.bracket-match.is-winner .incoming-stub {
-  background-color: #4caf50;
-  height: 4px;
-}
-.bracket-match.is-winner .outgoing-connector .line-vertical {
-  width: 4px;
+  border-bottom: 2px solid #000; /* Pozioma kreska */
+  border-right: 2px solid #000;  /* Pionowa kreska w górę */
 }
 
 </style>
