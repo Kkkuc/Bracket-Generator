@@ -4,6 +4,7 @@
         v-for="(_, index) in matchCount"
         :key="index"
         :match-index="index"
+        :round-index="roundIndex"
         :is-first-round="isFirstRound"
         :is-final="isFinal"
     />

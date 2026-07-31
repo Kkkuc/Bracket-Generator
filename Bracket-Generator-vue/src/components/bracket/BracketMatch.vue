@@ -19,12 +19,14 @@ import BracketTeam from './BracketTeam.vue';
 
 const props = defineProps({
   matchIndex: {type: Number, required: true},
+  roundIndex: { type: Number, default: 0 },
   isFirstRound: {type: Boolean, default: false},
   isFinal: {type: Boolean, default: false}
 });
 
 
 const isTopInPair = computed(() => props.matchIndex % 2 === 0);
+const scaleFactor = computed(() => Math.pow(2, props.roundIndex));
 </script>
 
 <style scoped>
@@ -51,7 +53,7 @@ const isTopInPair = computed(() => props.matchIndex % 2 === 0);
   position: absolute;
   right: calc(-1 * var(--round-gap, 60px) / 2);
   width: calc(var(--round-gap, 60px) / 2);
-  height: calc(50% + var(--vertical-gap, 20px));
+  height: calc( (50% + 20px) * v-bind(scaleFactor) );
   pointer-events: none;
 }
 
