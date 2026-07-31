@@ -6,9 +6,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5095', // <-- TUTAJ wpisz port, na którym działa Twój .NET!
+        target: 'http://localhost:5095', 
         changeOrigin: true,
-        secure: false // Wyłącza sprawdzanie certyfikatu SSL na localhost
+        secure: false 
       }
     }
   }
